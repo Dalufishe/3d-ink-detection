@@ -1,24 +1,24 @@
 # 3d-ink-detection
-擴展墨水檢測至3D，讓其能夠應用於所有區域和新卷軸
+擴展 ink detection 至 3D ，讓其能夠應用於所有區域和新卷軸。
 
-在這個倉庫中，我提供了數據準備、訓練和推理管道，還有一個經過非常充分訓練的3D U-Net模型，用於檢測維蘇威卷軸的3D墨水，以及該模型已經運行過的3D墨水檢測體積。
+在這個 repo 中，作者提供了數據準備、訓練和推理管道，還有一個經過非常充分訓練的 3D U-Net 模型，用於檢測 vc 卷軸的 3D 墨水，以及該模型已經運行過的 3D 墨水檢測體積。
 
-## 卷軸1 墨水檢測視頻
+## 卷軸1 ink detection 影片
 [![卷軸1](https://img.youtube.com/vi/eXHKyKgKAr0/0.jpg)](https://www.youtube.com/watch?v=eXHKyKgKAr0)
 
-## 卷軸2 墨水檢測視頻（由於推理提前取消，視頻略有截斷）
+## 卷軸2 ink detection 影片（由於推理提前取消，視頻略有截斷）
 [![卷軸2](https://img.youtube.com/vi/WvDKq0YaoVA/0.jpg)](https://www.youtube.com/watch?v=WvDKq0YaoVA)
 
-## 卷軸3 墨水檢測視頻
+## 卷軸3 ink detection 影片
 [![卷軸3](https://img.youtube.com/vi/TFgKJRuvXxU/0.jpg)](https://www.youtube.com/watch?v=TFgKJRuvXxU)
 
-## 卷軸4 墨水檢測視頻
+## 卷軸4 ink detection 影片
 [![卷軸4](https://img.youtube.com/vi/bs7tYjuGDEo/0.jpg)](https://www.youtube.com/watch?v=bs7tYjuGDEo)
 
 ## 數據準備
-為了訓練模型，你需要將原始掃描體積轉換為HDF5數組。這可以通過對此腳本https://github.com/ryanchesler/LSM/blob/main/volume_to_hdf.py進行一些路徑的微小修改來完成。此外，你還需要一些2D預測結果以映射回3D體積。你可以使用任何優秀的2D模型的預測結果，在許多實驗中，我使用了自己的unetr-> segformer管道，但另一個起點可以是大獎獲獎倉庫中提供的標籤https://github.com/younader/Vesuvius-Grandprize-Winner/tree/main/all_labels。要將這些2D標籤映射回3D，你需要目錄中每個部分的PPM文件。這些可以從官方數據服務器下載https://scrollprize.org/data_scrolls#data-server
+為了訓練模型，你需要將原始掃描體積轉換為 HDF5 數組。這可以通過對此腳本 https://github.com/ryanchesler/LSM/blob/main/volume_to_hdf.py 進行一些路徑的微小修改來完成。此外，你還需要一些 2D 預測結果以映射回 3D volume。你可以使用任何優秀的 2D 模型的預測結果，在許多實驗中，作者使用了自己的 unetr-> segformer 管道，但另一個起點可以是大獎獲獎倉庫中提供的標籤 https://github.com/younader/Vesuvius-Grandprize-Winner/tree/main/all_labels。要將這些 2D 標籤映射回 3D，你需要目錄中每個部分的 PPM 文件。這些可以從官方數據服務器下載 https://scrollprize.org/data_scrolls#data-server
 
-現在你已經收集好了這些數據，可以運行`python all_labels_to_hdf.py`並對路徑進行一些微小修改。這將初步創建一個新的訓練HDF5數組來表示3D中的標籤。為了製作一個驗證數組，我們需要對all_labels_to_hdf進行一些微小修改，以便將`20230904135535`設置為保留。重新運行該命令，現在你將擁有訓練和驗證數組。
+現在你已經收集好了這些數據，可以運行`python all_labels_to_hdf.py`並對路徑進行一些微小修改。這將初步創建一個新的訓練 HDF5 數組來表示3D中的標籤。為了製作一個驗證數組，我們需要對 all_labels_to_hdf 進行一些微小修改，以便將`20230904135535`設置為保留。重新運行該命令，現在你將擁有訓練和驗證數組。
 
 最終的數據準備步驟是運行pred_find_coords.py。這將掃描標籤體積並記錄實際標記的坐標，我們可以隨機從空間中採樣來找到所有時間點，但更高效的方法是知道坐標並容易訪問有效的訓練點。對訓練體積運行一次，對驗證體積運行一次，並對路徑進行一些微小調整，以獲得代表有效訓練坐標的numpy數組。
 
