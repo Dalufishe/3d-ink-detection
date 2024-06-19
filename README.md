@@ -1,4 +1,7 @@
 # 3d-ink-detection
+
+(translated by ChatGPT)
+
 擴展 ink detection 至 3D ，讓其能夠應用於所有區域和新卷軸。
 
 在這個 repo 中，作者提供了數據準備、訓練和推理管道，還有一個經過非常充分訓練的 3D U-Net 模型，用於檢測 vc 卷軸的 3D 墨水，以及該模型已經運行過的 3D 墨水檢測體積。
